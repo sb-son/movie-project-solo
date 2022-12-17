@@ -12,10 +12,6 @@ function Movie(id, title, rating){
     this.title = title;
     this.rating = rating;
     // this.poster = poster;
-    // this.genre = genre;
-    // this.plot = plot;
-    // this.iRating = irating;
-
 
     this.delete = function () {
         fetch(`https://adaptive-dent-wasabi.glitch.me/movies/` + this.id, {
@@ -52,10 +48,6 @@ function Movie(id, title, rating){
             body: JSON.stringify(editedMovie)
         }).then(() => console.log("Edited movie: " + this.title))
             .then(() => getMovies());
-    }
-
-    this.thisId = function(){
-        return this.id;
     }
 }
 
