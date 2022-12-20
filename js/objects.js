@@ -9,16 +9,11 @@ const editBtn = "<a href='#' class='edit text-white bg-success rounded-3 align-i
     "  <path fill-rule=\"evenodd\" d=\"M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z\"/>\n" +
     "</svg>Edit</a>";
 
-const plusBtn = "<a href='#' class='plus text-white bg-success rounded-3 align-items-center'><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-pencil-square\" viewBox=\"0 0 16 16\">\n" +
-    "  <path d=\"M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z\"/>\n" +
-    "  <path fill-rule=\"evenodd\" d=\"M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z\"/>\n" +
-    "</svg>+</a>"
+const modalBtn = `<button type="button" class="btn btn-primary" id="modal-btn" data-bs-toggle="modal" data-bs-target="#exampleModal">+</button>`
 
-const submitForm = () => {
-    return `<form id="add-movie" class="footer-form">
-\t<label for="title"> Add a movie
-\t\t<input type="text" placeholder="Enter Movie Title..." name="title" id="title">
-\t\t</label>
+const submitForm = `<label for="title"> Add a movie
+\t<input type="text" placeholder="Enter Movie Title..." name="title" id="title">
+\t</label>
 \t<br>
 <fieldset class="rating">
 \t<input type="radio" id="1-star" name="star" class="star" value="5"
@@ -36,10 +31,26 @@ const submitForm = () => {
 \t<input type="radio" id="5-star" name="star" class="star" value="1"
 \t\t>
 \t<label for="5-star">5</label>
-</fieldset>
-\t<button type='submit' id='submit-button'>Submit</button>
-</form>`
-};
+</fieldset>`
+
+const modalContent = `<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ${submitForm}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" id="submit-button">Understood</button>
+      </div>
+    </div>
+  </div>
+</div>`
+
 
 function Movie(id, title, rating) {
     this.id = id;
@@ -105,70 +116,34 @@ function getMovies() {
                 movieContainer.push(new Movie(m.id, m.title, m.rating))
                 $("#movies").append(`<div class="card col-4">Title: ${m.title} Rating: ${m.rating} <span id="movie-id" style="display: none">${m.id}</span>${editBtn} ${deleteBtn}</div>`);
             })
-            $("#movies").append(`<div class="card col-4">${plusBtn}</div>`)
+            $("#movies").append(`<div class="card col-4">${modalBtn} ${modalContent}</div>`)
+
         })
         .then(() => {
-            plus();
             addMovie();
             deleteMovie();
             console.log(movieContainer)
-        });
-}
-
-const plus = () => {
-
-    $(".plus").click(function () {
-        let card = $(this).parent(".card")
-        console.log('asd')
-        console.log(card)
-        $(card).html(submitForm)
-
-    })
+        }).catch(error => console.error(error));
 }
 
 const addMovie = () => {
-
-    $("#add-movie").submit(function (e) {
+    $("#submit-button").click(function (e) {
         e.preventDefault()
-        console.log('qwertyt')
         let title = $("#title").val();
-        let rating = document.querySelector('input[name="star"]:checked').value
-        console.log(rating)
+        let rating = $('input[name="star"]:checked').val();
         let movie = new Movie('', title, rating);
-        console.log(title)
-        console.log(rating)
-        movie.add()
+        if (title === '' && rating === undefined) {
+                    $("#title").css("border-color", "red")
+                    $("#title").attr("placeholder", "Enter a title")
+                } else if (title === '') {
+                    $("#title").css("border-color", "red")
+                } else if (rating === undefined) {
+                    console.log('need a rating')
+                } else {
+                    movie.add()
+                }
     })
 }
-
-    // $('#add-movie').submit(function (e) {
-    //     e.preventDefault();
-    //     let title = $("#title").val();
-    //     let rating = $("#rating").val();
-    //     let movie = new Movie('', title, rating);
-    //     if (title === '' && rating === '') {
-    //         console.log('asd')
-    //         console.log(title)
-    //         console.log(rating)
-    //         $("#title").css("border-color", "red")
-    //         $("#title").attr("placeholder", "Enter a title")
-    //         $("#rating").css("border-color", "red")
-    //         $("#rating").attr("placeholder", "Enter a Rating")
-    //     } else if (title === '') {
-    //         // $("#title").css("outline", "1px red")
-    //         $("#title").css("border-color", "red")
-    //         console.log('title')
-    //     } else if (rating === '') {
-    //         $("#rating").css("border-color", "red")
-    //         console.log('rating')
-    //     } else {
-    //         movie.add()
-    //         $("#title").css("border-color", "")
-    //         $("#rating").css("border-color", "")
-    //         $("#title").val('');
-    //         $("#rating").val('');
-    //     }
-    // })
 
 const deleteMovie = () => {
     $(".delete").click(function (e) {
