@@ -15,8 +15,7 @@ const submitForm = `<label for="title">
 \t<input type="text" placeholder="Enter Movie Title..." name="title" id="title" data-bs-toggle="popover" data-bs-content="Enter a movie">
 \t</label>
 \t<br>
-<div id="rating-popover" data-bs-toggle="popover" data-bs-content="Enter a rating">
-<fieldset class="rating">
+<fieldset class="rating" id="rating-popover" data-bs-toggle="popover" data-bs-content="Enter a rating" data-bs-placement="bottom">
 \t<input type="radio" id="1-star" name="star" class="star" value="5"
 \t\t>
 \t<label for="1-star">1</label>
@@ -32,8 +31,7 @@ const submitForm = `<label for="title">
 \t<input type="radio" id="5-star" name="star" class="star" value="1"
 \t\t>
 \t<label for="5-star">5</label>
-</fieldset>
-</div>`
+</fieldset>`
 
 const modalContent = `<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -116,7 +114,6 @@ function getMovies() {
                 movieContainer.push(new Movie(m.id, m.title, m.rating))
                 $("#movies").append(`<div class="card d-flex col-4 justify-content-between p-0">Title: ${m.title} Rating: ${m.rating} <span id="movie-id" style="display: none">${m.id}</span><div>${editBtn} ${deleteBtn}</div></div>`);
             })
-
             $("#movies").append(`<div class="card col-4 justify-content-center align-items-center p-0">${modalBtn} ${modalContent}</div>`)
         })
         .then(() => {
@@ -135,14 +132,21 @@ const addMovie = () => {
         if (title === '' && rating === undefined) {
                     $("#title").css("border-color", "red");
                     $("#title").attr("placeholder", "Enter a title");
+                    $("#title").popover("enable");
+                    $("#title").popover("show");
+                    setTimeout(function () {
+                        $("#title").popover("hide");
+                    }, 5000);
                     $("#rating-popover").popover("show");
                     setTimeout(function () {
                         $("#rating-popover").popover("hide");
                     }, 5000);
-                    $("#title").popover("show");
                 } else if (title === '') {
                     $("#title").css("border-color", "red")
                     $("#title").popover("show");
+                    setTimeout(function () {
+                        $("#title").popover("hide");
+                    }, 5000);
                 } else if (rating === undefined) {
                     console.log('need a rating')
                     $("#rating-popover").popover("show");
@@ -156,14 +160,15 @@ const addMovie = () => {
                 }
     })
 
-    $("#rating-popover").popover({
-        placement: 'bottom'
-    });
-
     $(".btn-close").click(function () {
         $("#title").val('');
         $("#title").css("border-color", "");
         $('input[name="star"]:checked').prop('checked', false)
+    })
+
+    $("#title").click(function () {
+        $("#title").css("border-color", "");
+        $("#title").popover("disable");
     })
 }
 
