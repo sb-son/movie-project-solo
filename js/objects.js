@@ -9,6 +9,8 @@ const editBtn = "<a href='#' class='edit text-white bg-success rounded-3 align-i
     "  <path fill-rule=\"evenodd\" d=\"M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z\"/>\n" +
     "</svg>Edit</a>";
 
+const cancelBtn = "<a href='#' class='cancel text-white bg-success rounded-3 align-items-center'>Cancel</a>";
+
 const modalBtn = `<button type="button" class="btn btn-primary" id="modal-btn" data-bs-toggle="modal" data-bs-target="#exampleModal">+</button>`
 
 const submitForm = `<label for="title">
@@ -49,7 +51,6 @@ const modalContent = `<div class="modal fade" id="exampleModal" tabindex="-1" ar
     </div>
   </div>
 </div>`
-
 
 function Movie(id, title, rating) {
     this.id = id;
@@ -112,15 +113,28 @@ function getMovies() {
             $("#spinner").empty();
             data.forEach(function (m) {
                 movieContainer.push(new Movie(m.id, m.title, m.rating))
-                $("#movies").append(`<div class="card d-flex col-4 justify-content-between p-0">Title: ${m.title} Rating: ${m.rating} <span id="movie-id" style="display: none">${m.id}</span><div>${editBtn} ${deleteBtn}</div></div>`);
+                $("#movies").append(`<div class="card d-flex col-4 justify-content-between p-0"><div id="front" class="cardFront">Title: ${m.title} Rating: ${m.rating} <span id="movie-id" style="display: none">${m.id}</span><div>${editBtn}<button type="button" class="flip-btn" id="flip-btn">Flip Card</button></div></div><div id="back" class="cardBack">${deleteBtn} ${cancelBtn}</div></div>`);
             })
             $("#movies").append(`<div class="card col-4 justify-content-center align-items-center p-0">${modalBtn} ${modalContent}</div>`)
         })
         .then(() => {
             addMovie();
             deleteMovie();
+            flipCard();
             console.log(movieContainer)
         }).catch(error => console.error(error));
+}
+
+const flipCard = () => {
+    $(".flip-btn").click(function () {
+        $(this).parent().parent("#front").toggleClass('flipped')
+        $(this).parent().parent().siblings("#back").toggleClass('flipped')
+    })
+
+    $(".cancel").click(function () {
+        $(this).parent("#back").toggleClass('flipped')
+        $(this).parent().siblings("#front").toggleClass('flipped')
+    })
 }
 
 const addMovie = () => {
@@ -170,12 +184,21 @@ const addMovie = () => {
         $("#title").css("border-color", "");
         $("#title").popover("disable");
     })
+
+    $("#modal-btn").click(function () {
+        setTimeout(() => {
+            checkDisplay("#exampleModal")
+            if (checkDisplay("#exampleModal")) {
+                $("#title").focus()
+            }
+        }, 600)
+    });
 }
 
 const deleteMovie = () => {
     $(".delete").click(function (e) {
         e.preventDefault();
-        let movieID = parseInt($(this).parent().siblings("#movie-id").html())
+        let movieID = parseInt($(this).parent().siblings("#front").children("#movie-id").html())
         for (let movie of movieContainer) {
             if (movie.id === movieID) {
                 movie.delete()
@@ -199,6 +222,10 @@ const editMovie = () => {
             }
         }
     })
+}
+
+function checkDisplay(element) {
+    return $(element).css('display') == 'block';
 }
 
 /////      https://adaptive-dent-wasabi.glitch.me/movies
