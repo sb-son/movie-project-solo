@@ -174,25 +174,24 @@ const addMovie = () => {
                 }
     })
 
-    $(".btn-close").click(function () {
-        $("#title").val('');
-        $("#title").css("border-color", "");
-        $('input[name="star"]:checked').prop('checked', false)
-    })
-
     $("#title").click(function () {
         $("#title").css("border-color", "");
         $("#title").popover("disable");
     })
 
-    $("#modal-btn").click(function () {
+    $('#exampleModal').on('hide.bs.modal', function () {
+        $("#title").val('')
+        $('input[name="star"]:checked').prop('checked', false)
+    })
+
+    $('#exampleModal').on('show.bs.modal', function () {
         setTimeout(() => {
             checkDisplay("#exampleModal")
             if (checkDisplay("#exampleModal")) {
                 $("#title").focus()
             }
         }, 600)
-    });
+    })
 }
 
 const deleteMovie = () => {
@@ -225,7 +224,7 @@ const editMovie = () => {
 }
 
 function checkDisplay(element) {
-    return $(element).css('display') == 'block';
+    return $(element).css('display') === 'block';
 }
 
 /////      https://adaptive-dent-wasabi.glitch.me/movies
