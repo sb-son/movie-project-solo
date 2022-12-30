@@ -9,7 +9,7 @@ const deleteBtn = "<a href='#' class='delete text-white bg-danger rounded-3 alig
 //     "  <path fill-rule=\"evenodd\" d=\"M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z\"/>\n" +
 //     "</svg>Edit</a>";
 
-const editBtn = `<button type="button" class="btn btn-primary" id="edit-modal-btn" data-bs-toggle="modal" data-bs-target="#editModalContent">Edit</button>`
+const editBtn = `<button type="button" class="btn btn-primary edit" id="edit-modal-btn" data-bs-toggle="modal" data-bs-target="#editModalContent">Edit</button>`
 
 const cancelBtn = "<a href='#' class='cancel text-white bg-success rounded-3 align-items-center'>Cancel</a>";
 
@@ -65,7 +65,7 @@ const editModalContent = `<div class="modal fade" id="editModalContent" tabindex
         ${submitForm}
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn btn-primary" id="edit-button">Confirm</button>
+        <button type="submit" class="btn btn-primary confirm-edit" id="edit-button">Confirm</button>
       </div>
     </div>
   </div>
@@ -139,6 +139,7 @@ function getMovies() {
         .then(() => {
             addMovie();
             deleteMovie();
+            editMovie();
             flipCard();
             console.log(movieContainer)
         }).catch(error => console.error(error));
@@ -228,16 +229,20 @@ const deleteMovie = () => {
 }
 
 const editMovie = () => {
-    // let movieID = parseInt($(this).siblings("#movie-id").html())
-    let movieID = parseInt($(this).siblings("#movie-id").html())
+    // let movieID = parseInt($(this).parent().siblings("#movie-id").html())
+    let movieID;
     $(".edit").click(function () {
-
+        movieID = parseInt($(this).parent().siblings("#movie-id").html())
     })
 
-    $("#edit-movie").submit(function (e) {
-        e.preventDefault();
+    $(".confirm-edit").click(function () {
         for (let movie of movieContainer) {
             if (movie.id === movieID) {
+                let title = $("#title").val();
+                let rating = $('input[name="star"]:checked').val();
+                let movie = new Movie(movieID, title, rating);
+                console.log(movie)
+                $('#editModalContent').modal("hide");
                 movie.edit()
             }
         }

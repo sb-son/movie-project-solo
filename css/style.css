@@ -52,10 +52,10 @@
     display: flex;
 }
 
-.edit {
-    width: 50%;
-    float: left;
-}
+/*.edit {*/
+/*    width: 50%;*/
+/*    float: left;*/
+/*}*/
 
 .delete {
     width: 50%;
